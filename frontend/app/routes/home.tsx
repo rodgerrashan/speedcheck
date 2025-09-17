@@ -152,12 +152,12 @@ export default function HomePage() {
 
         <motion.h1 
           variants={titleVariants}
-          className="text-5xl font-bold tracking-tight text-primary sm:text-7xl md:text-8xl"
+          className="text-4xl font-bold tracking-tight text-primary sm:text-7xl md:text-7xl"
         >
           Experience the <br />
           <motion.span 
             variants={titleVariants}
-            className="text-accent text-9xl"
+            className="text-accent text-5xl sm:text-8xl md:text-9xl"
             whileHover={{ 
               scale: 1.05,
               transition: springTransition 
