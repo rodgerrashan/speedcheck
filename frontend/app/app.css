@@ -8,11 +8,11 @@
    * The 'colors' object from your config becomes '--color-*' variables.
    * The 'DEFAULT' key is omitted from the variable name.
    */
-  --color-background: #0D0D0D;
-  --color-primary: #F5F5F7;
-  --color-secondary: #86868B;
-  --color-accent: #0071E3;
-  --color-accent-hover: #0077ED;
+  --color-background: #F5F5F7;       /* clean, soft light gray background */
+  --color-primary: #1C1C1E;          /* near-black text for maximum readability */
+  --color-secondary: #55565A;        /* medium gray for secondary text */
+  --color-accent: #0071E3;           /* strong, brandable blue accent */
+  --color-accent-hover: #005BB5;     /* darker blue for hover state */
 
   /*
    * FONTS

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import type { Transition } from 'framer-motion';
 import { Button } from '~/components/Button';
+import SpeedTest from '~/home/speedtest';
 
 // A simple counter for the live data effect
 function StatCounter({ finalValue, duration = 2000, children }: { finalValue: number; duration?: number; children: React.ReactNode }) {
@@ -145,6 +146,10 @@ export default function HomePage() {
         variants={heroVariants}
         className="container mx-auto flex min-h-screen flex-col items-center justify-center px-4 py-24 text-center md:py-32"
       >
+
+
+
+
         <motion.h1 
           variants={titleVariants}
           className="text-5xl font-bold tracking-tight text-primary sm:text-7xl md:text-8xl"
@@ -152,7 +157,7 @@ export default function HomePage() {
           Experience the <br />
           <motion.span 
             variants={titleVariants}
-            className="text-accent"
+            className="text-accent text-9xl"
             whileHover={{ 
               scale: 1.05,
               transition: springTransition 
@@ -190,6 +195,9 @@ export default function HomePage() {
       </motion.section>
 
       {/* 2. Stats Showcase Section */}
+       <div className="mt-12">
+        <SpeedTest />
+      </div>
       <motion.section
         initial="hidden"
         whileInView="visible"
