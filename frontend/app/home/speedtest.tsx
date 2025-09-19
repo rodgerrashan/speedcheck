@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '~/components/Button';
 
 // TypeScript interface for the test results
 interface SpeedTestResults {
@@ -40,7 +41,7 @@ export default function SpeedTest() {
   };
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-b bg-gray-200">
+    <section className="py-16 px-4 bg-gradient-to-b ">
       <div className="mx-auto max-w-6xl ">
         {/* Header Section */}
         <div className="text-center mb-12">
@@ -111,10 +112,10 @@ export default function SpeedTest() {
         </div>
 
             <div className="text-center">
-              <button 
+              <Button
                 onClick={runTest} 
                 disabled={isLoading}
-                className="inline-flex items-center justify-center px-12 py-5 text-xl  font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-full hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95  hover:shadow-blue-500/25 relative overflow-hidden group"
+                className="font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-full hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95  hover:shadow-blue-500/25 relative overflow-hidden group"
               >
                 {/* Button shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
@@ -122,19 +123,15 @@ export default function SpeedTest() {
                 <span className="relative z-10">
                   {isLoading ? (
                     <>
-                      {/* <div className="animate-spin -ml-1 mr-4 h-6 w-6 border-3 border-white border-t-transparent rounded-full"></div> */}
                       Analyzing Performance...
                     </>
                   ) : (
                     <>
-                      {/* <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg> */}
                       Start Test
                     </>
                   )}
                 </span>
-              </button>
+              </Button>
               
               {!isLoading && (results.ping || results.download || results.upload) && (
                 <motion.p 
@@ -148,16 +145,6 @@ export default function SpeedTest() {
               )}
             </div>
           </div>
-        </motion.div>
-
-        {/* Additional Info Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mt-12 text-center"
-        >
-          
         </motion.div>
       </div>
     </section>
@@ -185,9 +172,9 @@ function MeterDisplay({ label, value, unit, isLoading, maxValue, color, bgColor,
   return (
     <div className={`${bgColor} rounded-3xl p-8 text-center relative overflow-hidden transform hover:scale-105 transition-all duration-300 border border-white/50 `}>
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent pointer-events-none"></div>
-      <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-400/10 rounded-full blur-xl"></div>
-      <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-blue-500/10 rounded-full blur-xl"></div>
+      <div className="absolute inset-0  pointer-events-none"></div>
+      <div className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl"></div>
+      <div className="absolute -bottom-10 -left-10 w-16 h-16 rounded-full blur-xl"></div>
       
       <div className="relative z-10">
         <p className="text-lg font-bold text-gray-800 mb-2 tracking-wide">{label}</p>
@@ -237,7 +224,7 @@ function MeterDisplay({ label, value, unit, isLoading, maxValue, color, bgColor,
                   exit={{ opacity: 0, scale: 0.8 }}
                   className="flex flex-col items-center"
                 >
-                  <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-1"></div>
+                  <div className="w-6 h-6  rounded-full animate-spin mb-1"></div>
                   <span className="text-xs text-gray-600">Testing</span>
                 </motion.div>
               ) : (
@@ -271,7 +258,7 @@ function MeterDisplay({ label, value, unit, isLoading, maxValue, color, bgColor,
               'bg-red-100 text-red-800'
             }`}>
               {percentage > 80 ? '⚡ Blazing Fast' :
-               percentage > 50 ? '🚀 High Performance' : '⚠️ Needs Optimization'}
+               percentage > 50 ? '🚀 High Performance' : ''}
             </span>
           </motion.div>
         )}

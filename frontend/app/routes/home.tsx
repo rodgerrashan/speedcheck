@@ -4,6 +4,7 @@ import type { Variants } from 'framer-motion';
 import type { Transition } from 'framer-motion';
 import { Button } from '~/components/Button';
 import SpeedTest from '~/home/speedtest';
+import ImmersiveFeature from '~/home/ImmersiveFeature';
 
 // A simple counter for the live data effect
 function StatCounter({ finalValue, duration = 2000, children }: { finalValue: number; duration?: number; children: React.ReactNode }) {
@@ -22,6 +23,9 @@ function StatCounter({ finalValue, duration = 2000, children }: { finalValue: nu
     requestAnimationFrame(animateCount);
   }, [finalValue, duration]);
 
+
+  
+
   return (
     <div className="text-center">
       <p className="text-5xl font-bold tracking-tighter text-accent md:text-6xl">
@@ -33,6 +37,20 @@ function StatCounter({ finalValue, duration = 2000, children }: { finalValue: nu
 }
 
 export default function HomePage() {
+
+
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   // Custom variants for different animation types
   const heroVariants: Variants = {
     hidden: { 
@@ -69,24 +87,7 @@ export default function HomePage() {
     }
   };
 
-  const statsVariants: Variants = {
-    hidden: { 
-      opacity: 0, 
-      scale: 0.8,
-      y: 40
-    },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "backOut",
-        staggerChildren: 0.15,
-        delayChildren: 0.2
-      }
-    }
-  };
+  
 
   const featureVariants: Variants = {
     hidden: { 
@@ -138,86 +139,137 @@ export default function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* 1. Hero Section */}
+      <>
+      {/* Speed Bubbles Background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        {[...Array(15)].map((_, i) => {
+          const direction = Math.random() > 0.5 ? 1 : -1; // left-to-right or right-to-left
+          const size = 6 + Math.random() * 14;
+          const yPos = Math.random() * windowSize.height; // safe now
+          const hue = Math.random() * 360;
+
+          return (
+            <motion.div
+              key={i}
+              initial={{
+                x: direction === 1 ? -size * 2 : windowSize.width + size * 2,
+                y: yPos,
+                opacity: 0
+              }}
+              animate={{
+                x: direction === 1 ? windowSize.width + size * 2 : -size * 2,
+                y: yPos,
+                opacity: [0, 1, 0]
+              }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 2 + Math.random() * 2,
+                ease: "linear",
+                delay: Math.random() * 2
+              }}
+              className="absolute rounded-full"
+              style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                backgroundColor: `hsl(${hue}, 70%, 70%)`,
+              }}
+            />
+          );
+        })}
+      </div>
+
+      {/* Content Section */}
       <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={heroVariants}
-        className="container mx-auto flex min-h-screen flex-col items-center justify-center px-4 py-24 text-center md:py-32"
+        className="relative z-10 container mx-auto flex min-h-screen flex-col items-center justify-center px-4 py-24 text-center md:py-32"
       >
-
-
-
-
-        <motion.h1 
+        <motion.h1
           variants={titleVariants}
           className="text-4xl font-bold tracking-tight text-primary sm:text-7xl md:text-7xl"
         >
           Experience the <br />
-          <motion.span 
+          <motion.span
             variants={titleVariants}
             className="text-accent text-5xl sm:text-8xl md:text-9xl"
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
-              transition: springTransition 
+              transition: springTransition
             }}
           >
             Zero-Latency
           </motion.span> Network.
         </motion.h1>
-        
-        <motion.p 
+
+        <motion.p
           variants={titleVariants}
           className="mt-6 max-w-2xl text-lg text-secondary md:text-xl"
         >
           You are now connected to the EngEx Private 5G Network. Explore demos
           that were once impossible and witness the true speed of tomorrow.
         </motion.p>
-        
-        <motion.div 
+
+        <motion.div
           variants={titleVariants}
           className="mt-8"
         >
           <motion.div
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
               transition: springTransition
             }}
-            whileTap={{ 
+            whileTap={{
               scale: 0.95,
               transition: { duration: 0.1 }
             }}
           >
-            <Button href="/demos">Explore Live Demos</Button>
+          
+<Button
+  onClick={() => {
+    const demosElement = document.getElementById("speed");
+    if (demosElement) {
+      demosElement.scrollIntoView({ behavior: "smooth" });
+    }
+  }}
+>
+  Test Speed
+</Button>
+
+
+<Button
+  className="ml-4 bg-transparent border border-accent text-accent hover:bg-accent hover:text-white"
+  onClick={() => {
+    const demosElement = document.getElementById("demos");
+    if (demosElement) {
+      demosElement.scrollIntoView({ behavior: "smooth" });
+    }
+  }}
+>
+  Explore
+</Button>
+
           </motion.div>
         </motion.div>
       </motion.section>
+    </>
+
 
       {/* 2. Stats Showcase Section */}
-       <div className="mt-12">
+      <section id='speed'>
+        <div className="mt-12">
         <SpeedTest />
       </div>
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.4 }}
-        variants={statsVariants}
-        transition={smoothTransition}
-        className="container mx-auto grid grid-cols-1 gap-12 px-4 py-24 md:grid-cols-3 md:py-32"
-      >
-        <motion.div variants={statsVariants}>
-          <StatCounter finalValue={1780000}>Millions of Data Points</StatCounter>
-        </motion.div>
-        <motion.div variants={statsVariants}>
-          <StatCounter finalValue={99}>99.9% Uptime</StatCounter>
-        </motion.div>
-        <motion.div variants={statsVariants}>
-          <StatCounter finalValue={5}>&lt;5ms Latency</StatCounter>
-        </motion.div>
-      </motion.section>
+
+      </section>
+       
       
-      {/* 3. Immersive Feature Section */}
+
+
+      <section id="demos">
+         {/* 3. Immersive Feature Section */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -243,9 +295,19 @@ export default function HomePage() {
         >
           Stream 8K video without a buffer. Collaborate in real-time AR.
           Game with the power of a high-end PC, right from your device. This is
-          not the future—it's your current connection.
+          not the future, it's your current connection.
         </motion.p>
       </motion.section>
+
+      <ImmersiveFeature />
+
+
+
+      </section>
+      
+     
+
+
 
       {/* 4. Final Call-to-Action Section */}
       <motion.section
