@@ -6,6 +6,51 @@ import { Button } from '~/components/Button';
 import SpeedTest from '~/home/speedtest';
 import ImmersiveFeature from '~/home/ImmersiveFeature';
 
+
+
+const features = [
+  {
+    icon: "⚡️",
+    title: "Get Things Done in a Blink",
+    description:
+      "Imagine downloading a full movie in just a few seconds. That’s 5G speed. Waiting for things to load will become a thing of the past.",
+  },
+  {
+    icon: "⏱️",
+    title: "No More Annoying Delays",
+    description:
+      "You know the lag on video calls or in online games? 5G gets rid of that delay. Actions become instant, making everything feel incredibly responsive.",
+  },
+  {
+    icon: "📡",
+    title: "Everything Connects, Nothing Slows Down",
+    description:
+      "Ever been in a crowd and your internet stops working? 5G is built to handle millions of devices at once, so everyone gets a fast connection.",
+  },
+];
+
+// Animation variants for the grid container to stagger the cards
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+// Animation variants for each individual feature card
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
+
 export default function HomePage() {
 
 
@@ -101,11 +146,7 @@ export default function HomePage() {
     restDelta: 0.001
   };
 
-  // Custom smooth transition
-  const smoothTransition: Transition = {
-    duration: 0.8,
-    ease: [0.4, 0, 0.2, 1]
-  };
+  
 
   return (
     
@@ -275,17 +316,54 @@ export default function HomePage() {
       </motion.section>
 
       <ImmersiveFeature />
-
-
-
       </section>
+
+
+      <section id="features">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={containerVariants}
+        className="container mx-auto px-4 py-24 text-center md:py-32"
+      >
+        <motion.h2
+          
+          className="text-4xl font-bold tracking-tight text-primary md:text-6xl"
+        >
+          Why 5G is a Game-Changer
+        </motion.h2>
+
+        {/* Grid container for the feature cards */}
+        <motion.div
+          variants={containerVariants}
+          className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3"
+        >
+          {features.map((feature) => (
+            <motion.div
+              key={feature.title}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="cursor-pointer rounded-lg border border-white/10 bg-white/5 p-8"
+            >
+              <span className="text-5xl">{feature.icon}</span>
+              <h3 className="mt-6 text-2xl font-bold text-primary">
+                {feature.title}
+              </h3>
+              <p className="mt-2 text-base text-secondary">
+                {feature.description}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
       
-     
-
-
+    
 
       {/* 4. Final Call-to-Action Section */}
-      <motion.section
+      <section id='contact'>
+        <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.6 }}
@@ -324,6 +402,8 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
       </motion.section>
+      </section>
+      
     </div>
   );
 }
