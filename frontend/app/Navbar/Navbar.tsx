@@ -1,35 +1,76 @@
-import { Link, NavLink } from 'react-router-dom';
+import { useEffect, useState } from "react";
 
-const navLinks = [
-  { name: 'Demos', path: '/demos' },
-  { name: 'Analytics', path: '/analytics' },
-  { name: 'About 5G', path: '/about-5g' },
+const sections = [
+  { id: "hero", label: "Hero" },
+  { id: "speed", label: "Test" },
+  { id: "demos", label: "Demos" },
+  { id: "features", label: "Features" },
+  { id: "contact", label: "Contact" },
 ];
 
-export function Navbar() {
+export default function Navbar() {
+  const [active, setActive] = useState("hero");
+  const [hideNav, setHideNav] = useState(false);
+  const [lastScroll, setLastScroll] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 100;
+
+      // Highlight active section
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i].id);
+        if (section && scrollPosition >= section.offsetTop) {
+          setActive(sections[i].id);
+          break;
+        }
+      }
+
+      // Hide/show navbar like Apple
+      if (window.scrollY > lastScroll && window.scrollY > 100) {
+        setHideNav(true); // scrolling down
+      } else {
+        setHideNav(false); // scrolling up
+      }
+      setLastScroll(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScroll]);
+
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link to="/" className="text-xl font-bold tracking-tight">
-          EngEx <span className="text-accent">5G</span>
-        </Link>
-        <nav className="hidden items-center space-x-6 text-sm md:flex">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              className={({ isActive }) =>
-                `transition-colors hover:text-primary ${
-                  isActive ? 'text-primary' : 'text-secondary'
-                }`
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
-        </nav>
-        {/* Mobile menu button can be added here */}
+    <nav
+      className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-2xl rounded-full bg-white/30 backdrop-blur-lg px-6 py-3 flex items-center justify-between transition-transform duration-500 ${
+        hideNav ? "-translate-y-24" : "translate-y-0"
+      }`}
+    >
+      {/* Logo */}
+      <div className="text-xl font-bold text-black select-none">SPEEDY</div>
+
+      {/* Nav buttons */}
+      <div className="flex space-x-4">
+        {sections.map((sec) => (
+          <button
+            key={sec.id}
+            onClick={() => scrollToSection(sec.id)}
+            className={`px-1 py-1 rounded-lg transition-all duration-300 ${
+              active === sec.id
+                ? "font-semibold"
+                : "hover:font-medium"
+            }`}
+          >
+            {sec.label}
+          </button>
+        ))}
       </div>
-    </header>
+    </nav>
   );
 }

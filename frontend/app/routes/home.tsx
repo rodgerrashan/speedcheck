@@ -6,36 +6,6 @@ import { Button } from '~/components/Button';
 import SpeedTest from '~/home/speedtest';
 import ImmersiveFeature from '~/home/ImmersiveFeature';
 
-// A simple counter for the live data effect
-function StatCounter({ finalValue, duration = 2000, children }: { finalValue: number; duration?: number; children: React.ReactNode }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let startTime: number | null = null;
-    const animateCount = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      setCount(Math.floor(progress * finalValue));
-      if (progress < 1) {
-        requestAnimationFrame(animateCount);
-      }
-    };
-    requestAnimationFrame(animateCount);
-  }, [finalValue, duration]);
-
-
-  
-
-  return (
-    <div className="text-center">
-      <p className="text-5xl font-bold tracking-tighter text-accent md:text-6xl">
-        {count.toLocaleString()}
-      </p>
-      <p className="mt-1 text-sm text-secondary">{children}</p>
-    </div>
-  );
-}
-
 export default function HomePage() {
 
 
@@ -138,8 +108,10 @@ export default function HomePage() {
   };
 
   return (
+    
     <div className="overflow-x-hidden">
-      <>
+      <section id = "hero">
+         <>
       {/* Speed Bubbles Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {[...Array(15)].map((_, i) => {
@@ -255,6 +227,9 @@ export default function HomePage() {
         </motion.div>
       </motion.section>
     </>
+      
+    </section>
+     
 
 
       {/* 2. Stats Showcase Section */}
