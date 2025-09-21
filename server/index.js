@@ -1,50 +1,64 @@
-// server/server.ts
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-
 
 const app = express();
 const port = 3001;
 
 app.use(cors());
 
-// ✅ Download endpoint that checks if file exists
-app.get('/api/download', (req, res) => {
+// ✅ Ping endpoint
+app.get('/speedtest/ping', (req, res) => {
+  console.log(`[Ping] Request received from ${req.ip} at ${new Date().toISOString()}`);
+  res.status(200).send({ message: 'pong' });
+});
+
+// ✅ Download endpoint
+app.get('/speedtest/download', (req, res) => {
   const filePath = path.join(__dirname, 'public', 'serverdummy.dat');
 
   fs.access(filePath, fs.constants.F_OK, (err) => {
     if (err) {
-      // File not found
+      console.log(`[Download] File not found requested by ${req.ip} at ${new Date().toISOString()}`);
       return res.status(404).json({ error: 'Test file not found' });
     }
 
-    // Set headers so the browser knows it's a file
+    console.log(`[Download] Request received from ${req.ip} at ${new Date().toISOString()}`);
     res.setHeader('Content-Disposition', 'attachment; filename=serverdummy.dat');
     res.setHeader('Content-Type', 'application/octet-stream');
 
-    // Stream file to response
     const fileStream = fs.createReadStream(filePath);
+    fileStream.on('end', () => {
+      console.log(`[Download] File sent to ${req.ip} at ${new Date().toISOString()}`);
+    });
     fileStream.pipe(res);
   });
 });
 
-// ✅ Endpoint to simulate upload test
-app.post('/api/speedtest', (req, res) => {
-  res.status(200).send({ message: 'Upload received' });
+// ✅ Upload endpoint
+app.post('/speedtest/upload', (req, res) => {
+  console.log(`[Upload] Upload request received from ${req.ip} at ${new Date().toISOString()}`);
+  // Consume the request data (optional, just to measure real upload)
+  let receivedBytes = 0;
+  req.on('data', (chunk) => {
+    receivedBytes += chunk.length;
+  });
+  req.on('end', () => {
+    console.log(`[Upload] Upload complete from ${req.ip}, ${receivedBytes} bytes received at ${new Date().toISOString()}`);
+    res.status(200).send({ message: 'Upload received' });
+  });
 });
 
-
-// Endpoint to stream video
+// ✅ Video endpoint (unchanged, optional logging)
 app.get("/video", (req, res) => {
+  console.log(`[Video] Request from ${req.ip} at ${new Date().toISOString()}`);
   const videoPath = path.join(__dirname, "public", "videos/4k-sample.mp4");
   const stat = fs.statSync(videoPath);
   const fileSize = stat.size;
   const range = req.headers.range;
 
   if (range) {
-    // Handle Range requests
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? Math.min(parseInt(parts[1], 10), fileSize - 1) : fileSize - 1;
@@ -66,7 +80,6 @@ app.get("/video", (req, res) => {
     const stream = fs.createReadStream(videoPath, { start, end });
     stream.pipe(res);
   } else {
-    // No Range header – serve full file
     const headers = {
       "Content-Length": fileSize,
       "Content-Type": "video/mp4",
@@ -76,11 +89,9 @@ app.get("/video", (req, res) => {
   }
 });
 
-
-// ✅ Start the Server
+// ✅ Start the server
 app.listen(port, () => {
-  console.log(`🚀 Server is running at http://localhost:${port}`);
-  console.log(`✅ Video server running at http://localhost:${port}/video`);
-  console.log(`📂 File download at http://localhost:${port}/api/download`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
+  console.log(`🏓 Ping endpoint: http://localhost:${port}/speedtest/ping`);
+  console.log(`📂 Download endpoint: http://localhost:${port}/speedtest/download`);
 });
-

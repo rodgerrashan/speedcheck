@@ -21,23 +21,37 @@ export default function SpeedTest() {
     setIsLoading(true);
     setResults({ ping: null, download: null, upload: null });
 
-    // Simulate network tests with realistic delays
-    // --- 1. Ping Test ---
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const ping = Math.floor(Math.random() * 50) + 5;
-    setResults((prev) => ({ ...prev, ping }));
-    
-    // --- 2. Download Speed Test ---
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    const downloadSpeedMbps = Math.floor(Math.random() * 800) + 50;
-    setResults((prev) => ({ ...prev, download: downloadSpeedMbps }));
+    try {
+      // --- 1. Ping Test ---
+      const pingStart = performance.now();
+      await fetch("http://localhost:3001/speedtest/ping");
+      const pingEnd = performance.now();
+      const ping = Math.round(pingEnd - pingStart);
+      setResults((prev) => ({ ...prev, ping }));
 
-    // --- 3. Upload Speed Test ---
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    const uploadSpeedMbps = Math.floor(Math.random() * 400) + 25;
-    setResults((prev) => ({ ...prev, upload: uploadSpeedMbps }));
-    
-    setIsLoading(false);
+      // --- 2. Download Speed Test ---
+      const downloadStart = performance.now();
+      const downloadResponse = await fetch("http://localhost:3001/speedtest/download");
+      const downloadData = await downloadResponse.blob();
+      const downloadEnd = performance.now();
+      const downloadSpeedMbps = Math.round((downloadData.size * 8) / (downloadEnd - downloadStart) / 1000);
+      setResults((prev) => ({ ...prev, download: downloadSpeedMbps }));
+
+      // --- 3. Upload Speed Test ---
+      const uploadStart = performance.now();
+      const uploadBlob = new Blob([new Uint8Array(1024 * 500)]); // 500 KB test
+      await fetch("http://localhost:3001/speedtest/upload", {
+        method: "POST",
+        body: uploadBlob,
+      });
+      const uploadEnd = performance.now();
+      const uploadSpeedMbps = Math.round((uploadBlob.size * 8) / (uploadEnd - uploadStart) / 1000);
+      setResults((prev) => ({ ...prev, upload: uploadSpeedMbps }));
+    } catch (err) {
+      console.error("Speed test failed", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
