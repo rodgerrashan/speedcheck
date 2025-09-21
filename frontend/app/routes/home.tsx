@@ -5,6 +5,7 @@ import type { Transition } from 'framer-motion';
 import { Button } from '~/components/Button';
 import SpeedTest from '~/home/speedtest';
 import ImmersiveFeature from '~/home/ImmersiveFeature';
+import FinalSection from '~/home/FinalSection';
 
 
 
@@ -358,52 +359,11 @@ export default function HomePage() {
         </motion.div>
       </motion.div>
     </section>
+
+      <FinalSection />
+\
+
       
-    
-
-      {/* 4. Final Call-to-Action Section */}
-      <section id='contact'>
-        <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.6 }}
-        variants={ctaVariants}
-        transition={springTransition}
-        className="container mx-auto px-4 py-24 text-center md:py-32"
-      >
-        <motion.h2 
-          variants={ctaVariants}
-          className="text-4xl font-bold tracking-tight text-primary md:text-6xl"
-        >
-          Ready to Begin?
-        </motion.h2>
-        
-        <motion.div 
-          variants={ctaVariants}
-          className="mt-8"
-        >
-          <motion.div
-            whileHover={{ 
-              scale: 1.1,
-              rotate: [0, -1, 1, 0],
-              transition: {
-                scale: springTransition,
-                rotate: { duration: 0.6, ease: "easeInOut" }
-              }
-            }}
-            whileTap={{ 
-              scale: 0.9,
-              transition: { duration: 0.1 }
-            }}
-          >
-            <Button href="/demos" className="px-8 py-4 text-lg ">
-              Start Your Experience
-            </Button>
-          </motion.div>
-        </motion.div>
-      </motion.section>
-      </section>
-
 
       <footer className="border-t  bg-gray-900 px-2 py-2 text-center text-sm text-gray-500">
   <div className="container mx-auto">
