@@ -1,9 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 
 export default function ImmersiveFeature() {
   const [speed, setSpeed] = useState(0);
   const [maxSpeed, setMaxSpeed] = useState(0);
+
+ const videoRef = useRef<HTMLVideoElement>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Check if video is already ready
+    if (video.readyState >= 3) {
+      // HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA
+      setLoading(false);
+    }
+
+    const handleWaiting = () => setLoading(true);   // buffering
+    const handlePlaying = () => setLoading(false);  // started playing
+    const handleError = () => setLoading(true);     // error
+
+    video.addEventListener("waiting", handleWaiting);
+    video.addEventListener("playing", handlePlaying);
+    video.addEventListener("error", handleError);
+
+    return () => {
+      video.removeEventListener("waiting", handleWaiting);
+      video.removeEventListener("playing", handlePlaying);
+      video.removeEventListener("error", handleError);
+    };
+  }, []);
+  
 
   useEffect(() => {
     let interval;
@@ -78,7 +107,48 @@ export default function ImmersiveFeature() {
       className="relative w-full h-screen overflow-hidden"
     >
       {/* Fullscreen Video */}
+
+      <div className="relative w-full h-full">
+      {loading && (
+  <motion.div
+    className="absolute inset-0 z-10 flex items-center justify-center p-4 text-center"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
+    {/* Background Image Layer */}
+    <div
+      className="absolute inset-0 bg-cover bg-center filter blur-xl"
+      style={{ backgroundImage: "url('/images/bg.jpg')" }}
+    />
+
+    {/* Overlay layer to darken the background */}
+    <div className="absolute inset-0 bg-black/30" />
+
+    {/* Content Layer */}
+    <motion.div
+      className="relative rounded-xl p-6 flex flex-col items-center justify-center min-h-[300px]"
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1, transition: { type: "spring", stiffness: 120 } }}
+    >
+      <motion.div
+        className="w-14 h-14 rounded-full bg-blue-500"
+        animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
+        transition={{ duration: 1.2, repeat: Infinity }}
+      />
+      <h2 className="text-white text-lg font-semibold mt-4">
+        Video streaming not working
+      </h2>
+      <p className="text-gray-200 text-sm mt-2">
+        Sorry, something went wrong. Please try again later.
+      </p>
+    </motion.div>
+  </motion.div>
+)}
+
+
       <video
+        ref={videoRef}
         src="http://localhost:3001/video"
         autoPlay
         loop
@@ -86,7 +156,11 @@ export default function ImmersiveFeature() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       />
+    </div>
 
+
+      {}
+      <>
       {/* Top left 4K bubble */}
       <div className="absolute top-6 right-6 flex flex-col gap-2 items-end">
         <div className="px-4 py-2 rounded-full bg-white/70 text-black/90 text-sm sm:text-base font-medium backdrop-blur-md">
@@ -103,6 +177,10 @@ export default function ImmersiveFeature() {
           Max: {maxSpeed.toFixed(2)} Mbps
         </div>
       </div>
+      
+      </>
+
+      
     </motion.section>
   );
 }
