@@ -52,7 +52,7 @@ app.post('/speedtest/upload', (req, res) => {
 
 // ✅ Video endpoint (unchanged, optional logging)
 app.get("/video", (req, res) => {
-  console.log(`[Video] Request from ${req.ip} at ${new Date().toISOString()}`);
+  // console.log(`[Video] Request from ${req.ip} at ${new Date().toISOString()}`);
   const videoPath = path.join(__dirname, "public", "videos/4k-sample.mp4");
   const stat = fs.statSync(videoPath);
   const fileSize = stat.size;
