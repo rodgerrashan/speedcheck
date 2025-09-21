@@ -89,6 +89,15 @@ app.get("/video", (req, res) => {
   }
 });
 
+
+// GET video info
+app.get("/video-info", (req, res) => {
+  const videoPath = path.join(__dirname, "public", "videos/4k-sample.mp4");
+  const stat = fs.statSync(videoPath);
+  res.json({ size: stat.size });
+});
+
+
 // ✅ Start the server
 app.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);

@@ -40,53 +40,39 @@ export default function ImmersiveFeature() {
  
     const check5GSpeed = async () => {
   try {
-    const start = performance.now();
+    const startTime = performance.now();
 
-    // Simulate more realistic 5G behavior with variable chunk sizes
+    // Get video size from backend
+    const infoRes = await fetch("http://localhost:3001/video-info");
+    const { size: videoSize } = await infoRes.json();
+
     const chunkSizes = [256 * 1024, 512 * 1024, 1024 * 1024];
     const chunkSize = chunkSizes[Math.floor(Math.random() * chunkSizes.length)];
 
-    // Random start for range request
-    const maxRangeStart = 50_000_000; // assume video is large
-    const randomStart = Math.floor(Math.random() * maxRangeStart);
-
-    // Optional: add a tiny random delay to mimic network jitter
-    await new Promise((res) => setTimeout(res, Math.random() * 50)); // 0–50ms jitter
+    // Ensure randomStart + chunkSize <= videoSize
+    const randomStart = Math.floor(Math.random() * (videoSize - chunkSize));
 
     const response = await fetch("http://localhost:3001/video", {
-      method: "GET",
-      headers: {
-        Range: `bytes=${randomStart}-${randomStart + chunkSize - 1}`,
-        "Cache-Control": "no-cache",
-      },
+      headers: { Range: `bytes=${randomStart}-${randomStart + chunkSize - 1}` },
     });
 
-    if (!response.ok && response.status !== 206) {
-      throw new Error("Bad response: " + response.status);
-    }
+    if (!response.ok && response.status !== 206) throw new Error("Bad response: " + response.status);
 
     const blob = await response.blob();
-    const end = performance.now();
+    const endTime = performance.now();
 
-    const duration = Math.max((end - start) / 1000, 0.001); // seconds
+    const duration = Math.max((endTime - startTime) / 1000, 0.001);
     const bytes = blob.size;
+    const fluctuationFactor = 0.9 + Math.random() * 0.2;
+    const speedBps = (bytes / duration) * fluctuationFactor;
 
-    // Add small random fluctuation to simulate 5G bursts
-    const fluctuationFactor = 0.9 + Math.random() * 0.2; // 0.9–1.1
-    const currentSpeed = (bytes / duration) * fluctuationFactor; // bytes/sec
-
-    // Convert to Mbps
-    const mbps = (currentSpeed * 8) / (1024 * 1024);
-
-    setSpeed(mbps);
-    setMaxSpeed((prevMax) => Math.max(prevMax, mbps));
+    setSpeed((speedBps * 8) / (1024 * 1024)); // Mbps
+    setMaxSpeed(prev => Math.max(prev, (speedBps * 8) / (1024 * 1024)));
   } catch (err) {
     console.error("Speed check failed:", err);
-
-    // fallback realistic 5G speeds (e.g., 100–800 Mbps)
     const fallback = 100 + Math.random() * 700;
     setSpeed(fallback);
-    setMaxSpeed((prevMax) => Math.max(prevMax, fallback));
+    setMaxSpeed(prev => Math.max(prev, fallback));
   }
 };
 
