@@ -396,7 +396,7 @@ export default function HomePage() {
               transition: { duration: 0.1 }
             }}
           >
-            <Button href="/demos" className="px-8 py-4 text-lg">
+            <Button href="/demos" className="px-8 py-4 text-lg ">
               Start Your Experience
             </Button>
           </motion.div>
@@ -405,7 +405,7 @@ export default function HomePage() {
       </section>
 
 
-      <footer className="border-t  bg-gray-900 px-2 py-2 text-center text-sm text-secondary">
+      <footer className="border-t  bg-gray-900 px-2 py-2 text-center text-sm text-gray-500">
   <div className="container mx-auto">
     <span>&copy; {new Date().getFullYear()} Speedy. All rights reserved.
       <span className="mt-2 pl-2">
