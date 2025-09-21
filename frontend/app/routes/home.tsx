@@ -403,7 +403,29 @@ export default function HomePage() {
         </motion.div>
       </motion.section>
       </section>
-      
+
+
+      <footer className="border-t  bg-gray-900 px-2 py-2 text-center text-sm text-secondary">
+  <div className="container mx-auto">
+    <span>&copy; {new Date().getFullYear()} Speedy. All rights reserved.
+      <span className="mt-2 pl-2">
+      Crafted by{" "}
+      <a 
+        href="https://www.facebook.com/profile.php?id=61578732612775" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="font-stretch-50% text-gray-400 hover:text-blue-500 transition-colors"
+      >
+        .helloworld
+      </a>
+    </span>
+
+
+    </span>
+    
+  </div>
+</footer>
+
     </div>
   );
 }
