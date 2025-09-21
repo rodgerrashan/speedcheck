@@ -9,6 +9,7 @@ import FinalSection from '~/home/FinalSection';
 
 
 
+
 const features = [
   {
     icon: "⚡️",
@@ -53,6 +54,20 @@ const itemVariants = {
 
 
 export default function HomePage() {
+
+  const [bubbles, setBubbles] = useState<any[]>([]);
+
+useEffect(() => {
+  const newBubbles = [...Array(15)].map(() => ({
+    direction: Math.random() > 0.5 ? 1 : -1,
+    size: 6 + Math.random() * 14,
+    yPos: Math.random() * window.innerHeight,
+    hue: Math.random() * 360,
+  }));
+  setBubbles(newBubbles);
+}, []);
+
+
 
 
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -154,44 +169,37 @@ export default function HomePage() {
     <div className="overflow-x-hidden">
       <section id = "hero">
          <>
-      {/* Speed Bubbles Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        {[...Array(15)].map((_, i) => {
-          const direction = Math.random() > 0.5 ? 1 : -1; // left-to-right or right-to-left
-          const size = 6 + Math.random() * 14;
-          const yPos = Math.random() * windowSize.height; // safe now
-          const hue = Math.random() * 360;
+  {bubbles.map((b, i) => (
+    <motion.div
+      key={i}
+      initial={{
+        x: b.direction === 1 ? -b.size * 2 : window.innerWidth + b.size * 2,
+        y: b.yPos,
+        opacity: 0,
+      }}
+      animate={{
+        x: b.direction === 1 ? window.innerWidth + b.size * 2 : -b.size * 2,
+        y: b.yPos,
+        opacity: [0, 1, 0],
+      }}
+      transition={{
+        repeat: Infinity,
+        repeatType: "loop",
+        duration: 2 + Math.random() * 2,
+        ease: "linear",
+        delay: Math.random() * 2,
+      }}
+      className="absolute rounded-full"
+      style={{
+        width: `${b.size}px`,
+        height: `${b.size}px`,
+        backgroundColor: `hsl(${b.hue}, 70%, 70%)`,
+      }}
+    />
+  ))}
+</div>
 
-          return (
-            <motion.div
-              key={i}
-              initial={{
-                x: direction === 1 ? -size * 2 : windowSize.width + size * 2,
-                y: yPos,
-                opacity: 0
-              }}
-              animate={{
-                x: direction === 1 ? windowSize.width + size * 2 : -size * 2,
-                y: yPos,
-                opacity: [0, 1, 0]
-              }}
-              transition={{
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 2 + Math.random() * 2,
-                ease: "linear",
-                delay: Math.random() * 2
-              }}
-              className="absolute rounded-full"
-              style={{
-                width: `${size}px`,
-                height: `${size}px`,
-                backgroundColor: `hsl(${hue}, 70%, 70%)`,
-              }}
-            />
-          );
-        })}
-      </div>
 
       {/* Content Section */}
       <motion.section
